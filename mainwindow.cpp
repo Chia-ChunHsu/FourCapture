@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addPermanentWidget(statusLabel);
     ui->statusBar->addPermanentWidget(statusProgressBar,1);
     ui->statusBar->addPermanentWidget(statusGap);
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
@@ -23,9 +24,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::ShowOnLabel(cv::Mat mat, QLabel *k)
 {
-    QImage qtemp = QImage((const unsigned char*)(mat.data),mat.cols,mat.rows,QImage::Format_RGB888);
+    QImage qtemp = QImage((const unsigned char*)(mat.data),mat.cols,mat.rows,mat.step,QImage::Format_RGB888);
     k->clear();
-    k->setPixmap(QPixmap::fromImage(qtemp.scaled(ui->CalLabel1->width(),ui->CalLabel1->height(),Qt::KeepAspectRatio)));
+    k->setPixmap(QPixmap::fromImage(qtemp.scaled(k->width(),k->height(),Qt::KeepAspectRatio)));
     k->show();
 }
 
@@ -64,17 +65,62 @@ void MainWindow::on_LoadCalButtom_clicked()
     {
         cv::Mat temp = cv::imread(fileNames[i].toStdString().c_str(),cv::IMREAD_COLOR);
         CalMat.push_back(temp);
-        //QImage qtemp = QImage((const unsigned char*)(temp.data),temp.cols,temp.rows,QImage::Format_RGB888);
-        //qimg.push_back(qtemp);
     }
-    statusProgressBar->setValue(40);
+
     ShowOnLabel(CalMat[0],ui->CalLabel1);
-    statusProgressBar->setValue(55);
     ShowOnLabel(CalMat[1],ui->CalLabel2);
-    statusProgressBar->setValue(70);
     ShowOnLabel(CalMat[2],ui->CalLabel3);
-    statusProgressBar->setValue(85);
     ShowOnLabel(CalMat[3],ui->CalLabel4);
     statusLabel->setText("Load Reference Pictures Success!");
+    statusProgressBar->setValue(20);
+
+    std::vector<cv::Mat> WarpMat;
+    std::vector<cv::Mat> nonDilateMask;
+    std::vector<cv::Mat> WarpM;
+    cv::Mat Result;
+    if(TS.Warp(CalMat,WarpMat,nonDilateMask,Result)!=1)
+    {
+        statusLabel->setText("Stitching Fail!");
+        return;
+    }
+    statusLabel->setText("Stitching Success!");
+
+    statusProgressBar->setValue(60);
+    ui->stackedWidget->setCurrentIndex(1);
+
+    for(int n=0;n<WarpMat.size();n++)
+    {
+        cv::Mat resultTemp = WarpMat[n].clone();
+        for(int i=0;i<WarpMat[n].cols;i++)
+        {
+            for(int j=0;j<WarpMat[n].rows;j++)
+            {
+                if(nonDilateMask[n].at<uchar>(j,i) == 255)
+                {
+                    resultTemp.at<cv::Vec3b>(j, i)[0] = WarpMat[n].at<cv::Vec3b>(j,i)[0];
+                    resultTemp.at<cv::Vec3b>(j, i)[1] = WarpMat[n].at<cv::Vec3b>(j,i)[1];
+                    resultTemp.at<cv::Vec3b>(j, i)[2] = WarpMat[n].at<cv::Vec3b>(j,i)[2];
+                }
+                else
+                {
+                    resultTemp.at<cv::Vec3b>(j, i)[0] = 0;
+                    resultTemp.at<cv::Vec3b>(j, i)[1] = 0;
+                    resultTemp.at<cv::Vec3b>(j, i)[2] = 0;
+                }
+            }
+        }
+        WarpM.push_back(resultTemp);
+    }
+
+    ShowOnLabel(WarpM[0],ui->WarpCalLabel1);
+    ShowOnLabel(WarpM[1],ui->WarpCalLabel2);
+    ShowOnLabel(WarpM[2],ui->WarpCalLabel3);
+    ShowOnLabel(WarpM[3],ui->WarpCalLabel4);
+    statusProgressBar->setValue(80);
+
+
+    ui->stackedWidget->setCurrentIndex(2);
+    ShowOnLabel(Result,ui->CalResultLabel);
+
     statusProgressBar->setValue(100);
 }

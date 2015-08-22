@@ -52,7 +52,7 @@ public:
     QLabel *WarpCalLabel1;
     QLabel *WarpCalLabel2;
     QLabel *WarpCalLabel3;
-    QLabel *WarpCalLabel2_2;
+    QLabel *WarpCalLabel4;
     QWidget *page_3;
     QLabel *CalResultLabel;
     QListWidget *ProgressList;
@@ -141,10 +141,10 @@ public:
         WarpCalLabel3->setObjectName(QStringLiteral("WarpCalLabel3"));
         WarpCalLabel3->setGeometry(QRect(10, 130, 160, 120));
         WarpCalLabel3->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
-        WarpCalLabel2_2 = new QLabel(page);
-        WarpCalLabel2_2->setObjectName(QStringLiteral("WarpCalLabel2_2"));
-        WarpCalLabel2_2->setGeometry(QRect(180, 130, 160, 120));
-        WarpCalLabel2_2->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
+        WarpCalLabel4 = new QLabel(page);
+        WarpCalLabel4->setObjectName(QStringLiteral("WarpCalLabel4"));
+        WarpCalLabel4->setGeometry(QRect(180, 130, 160, 120));
+        WarpCalLabel4->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
         stackedWidget->addWidget(page);
         page_3 = new QWidget();
         page_3->setObjectName(QStringLiteral("page_3"));
@@ -175,7 +175,7 @@ public:
         retranslateUi(MainWindow);
 
         tabWidget->setCurrentIndex(1);
-        stackedWidget->setCurrentIndex(0);
+        stackedWidget->setCurrentIndex(2);
         ProgressList->setCurrentRow(0);
 
 
@@ -201,7 +201,7 @@ public:
         WarpCalLabel1->setText(QString());
         WarpCalLabel2->setText(QString());
         WarpCalLabel3->setText(QString());
-        WarpCalLabel2_2->setText(QString());
+        WarpCalLabel4->setText(QString());
         CalResultLabel->setText(QString());
 
         const bool __sortingEnabled = ProgressList->isSortingEnabled();

@@ -19,6 +19,7 @@
 #include <Qlist>
 #include <QCameraInfo>
 #include <QProgressBar>
+#include "thread_stitch.h"
 
 namespace Ui {
 class MainWindow;
@@ -44,6 +45,9 @@ private:
     QProgressBar *statusProgressBar;
     QLabel *statusLabel;
     QLabel *statusGap;
+
+    Thread_Stitch TS;
+
 };
 
 #endif // MAINWINDOW_H

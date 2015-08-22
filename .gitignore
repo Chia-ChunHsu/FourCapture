@@ -2,3 +2,4 @@ debug/
 Makefile
 Makefile.Debug
 Makefile.Release
+release/
