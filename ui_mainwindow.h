@@ -39,6 +39,7 @@ public:
     QLabel *FilterLabel3;
     QLabel *FilterLabel4;
     QLabel *label_2;
+    QPushButton *LoadCapPic;
     QWidget *CalibrationTab;
     QStackedWidget *stackedWidget;
     QWidget *page_2;
@@ -56,6 +57,7 @@ public:
     QWidget *page_3;
     QLabel *CalResultLabel;
     QListWidget *ProgressList;
+    QWidget *tab;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -74,7 +76,7 @@ public:
         DetectTab->setObjectName(QStringLiteral("DetectTab"));
         CapturePicture = new QPushButton(DetectTab);
         CapturePicture->setObjectName(QStringLiteral("CapturePicture"));
-        CapturePicture->setGeometry(QRect(10, 270, 141, 51));
+        CapturePicture->setGeometry(QRect(10, 270, 160, 50));
         FilterLabel1 = new QLabel(DetectTab);
         FilterLabel1->setObjectName(QStringLiteral("FilterLabel1"));
         FilterLabel1->setGeometry(QRect(10, 10, 160, 120));
@@ -93,8 +95,11 @@ public:
         FilterLabel4->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
         label_2 = new QLabel(DetectTab);
         label_2->setObjectName(QStringLiteral("label_2"));
-        label_2->setGeometry(QRect(350, 50, 240, 180));
+        label_2->setGeometry(QRect(350, 10, 240, 180));
         label_2->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
+        LoadCapPic = new QPushButton(DetectTab);
+        LoadCapPic->setObjectName(QStringLiteral("LoadCapPic"));
+        LoadCapPic->setGeometry(QRect(180, 270, 160, 50));
         tabWidget->addTab(DetectTab, QString());
         CalibrationTab = new QWidget();
         CalibrationTab->setObjectName(QStringLiteral("CalibrationTab"));
@@ -160,6 +165,9 @@ public:
         ProgressList->setObjectName(QStringLiteral("ProgressList"));
         ProgressList->setGeometry(QRect(10, 10, 191, 311));
         tabWidget->addTab(CalibrationTab, QString());
+        tab = new QWidget();
+        tab->setObjectName(QStringLiteral("tab"));
+        tabWidget->addTab(tab, QString());
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -174,8 +182,8 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
-        stackedWidget->setCurrentIndex(2);
+        tabWidget->setCurrentIndex(0);
+        stackedWidget->setCurrentIndex(0);
         ProgressList->setCurrentRow(0);
 
 
@@ -191,6 +199,7 @@ public:
         FilterLabel3->setText(QString());
         FilterLabel4->setText(QString());
         label_2->setText(QString());
+        LoadCapPic->setText(QApplication::translate("MainWindow", "Load", 0));
         tabWidget->setTabText(tabWidget->indexOf(DetectTab), QApplication::translate("MainWindow", "Detect Mode", 0));
         CalLabel2->setText(QString());
         CalLabel4->setText(QString());
@@ -215,6 +224,7 @@ public:
         ProgressList->setSortingEnabled(__sortingEnabled);
 
         tabWidget->setTabText(tabWidget->indexOf(CalibrationTab), QApplication::translate("MainWindow", "Calibration Mode", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Black Calibration", 0));
     } // retranslateUi
 
 };

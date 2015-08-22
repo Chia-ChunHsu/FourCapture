@@ -33,15 +33,19 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void ShowOnLabel(cv::Mat mat,QLabel *k);
+    void Cal();
 
 private slots:
     void on_ProgressList_currentRowChanged(int currentRow);
 
     void on_LoadCalButtom_clicked();
 
+    void on_LoadCapPic_clicked();
+
 private:
     Ui::MainWindow *ui;
     std::vector<cv::Mat> CalMat;
+    std::vector<cv::Mat> CapMat;
     QProgressBar *statusProgressBar;
     QLabel *statusLabel;
     QLabel *statusGap;

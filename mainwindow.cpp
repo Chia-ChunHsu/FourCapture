@@ -30,6 +30,11 @@ void MainWindow::ShowOnLabel(cv::Mat mat, QLabel *k)
     k->show();
 }
 
+void MainWindow::Cal()
+{
+
+}
+
 void MainWindow::on_ProgressList_currentRowChanged(int currentRow)
 {
     if(currentRow == 0)
@@ -48,6 +53,7 @@ void MainWindow::on_ProgressList_currentRowChanged(int currentRow)
 
 void MainWindow::on_LoadCalButtom_clicked()
 {
+    CalMat.clear();
     statusProgressBar->setValue(0);
     QStringList fileNames = QFileDialog::getOpenFileNames(this,tr("Open Image"), "D:/Dropbox/sen3/HandHold_", tr("Image Files (*.jpg)"));
 
@@ -123,4 +129,39 @@ void MainWindow::on_LoadCalButtom_clicked()
     ShowOnLabel(Result,ui->CalResultLabel);
 
     statusProgressBar->setValue(100);
+}
+
+void MainWindow::on_LoadCapPic_clicked()
+{
+    CapMat.clear();
+    statusProgressBar->setValue(0);
+    QStringList fileNames = QFileDialog::getOpenFileNames(this,tr("Open Image"), "D:/Dropbox/sen3/HandHold_", tr("Image Files (*.jpg)"));
+
+    if(fileNames.size()>4)
+    {
+        statusLabel->setText("Choose Too Many Pictures!");
+        return;
+    }
+    else if(fileNames.size()<4)
+    {
+        statusLabel->setText("Not Enough Pictures!");
+        return;
+    }
+    for(int i=0;i<4;i++)
+    {
+        cv::Mat temp = cv::imread(fileNames[i].toStdString().c_str(),cv::IMREAD_COLOR);
+        if(temp.empty())
+        {
+            statusLabel->setText("Get Null Image!");
+            return;
+        }
+        CapMat.push_back(temp);
+    }
+
+    ShowOnLabel(CapMat[0],ui->FilterLabel1);
+    ShowOnLabel(CapMat[1],ui->FilterLabel2);
+    ShowOnLabel(CapMat[2],ui->FilterLabel3);
+    ShowOnLabel(CapMat[3],ui->FilterLabel4);
+    statusLabel->setText("Load Capture Pictures Success!");
+    statusProgressBar->setValue(20);
 }

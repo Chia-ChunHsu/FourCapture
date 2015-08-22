@@ -273,7 +273,6 @@ Stitch::Status Stitch::composePanorama2(InputArray images,InputArray otherimages
             {
                 blender_->prepare(corners, sizes);
                 is_blender_prepared = true;
-
             }
             // Blend the current image
             blender_->feed(img_warped_s, mask_warpeds, corners[img_idx]);

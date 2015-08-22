@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="DetectTab">
      <attribute name="title">
@@ -35,8 +35,8 @@
        <rect>
         <x>10</x>
         <y>270</y>
-        <width>141</width>
-        <height>51</height>
+        <width>160</width>
+        <height>50</height>
        </rect>
       </property>
       <property name="text">
@@ -111,7 +111,7 @@
       <property name="geometry">
        <rect>
         <x>350</x>
-        <y>50</y>
+        <y>10</y>
         <width>240</width>
         <height>180</height>
        </rect>
@@ -121,6 +121,19 @@
       </property>
       <property name="text">
        <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="LoadCapPic">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>270</y>
+        <width>160</width>
+        <height>50</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Load</string>
       </property>
      </widget>
     </widget>
@@ -138,7 +151,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_2">
        <widget class="QLabel" name="CalLabel2">
@@ -348,6 +361,11 @@
        </property>
       </item>
      </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Black Calibration</string>
+     </attribute>
     </widget>
    </widget>
   </widget>
