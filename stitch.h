@@ -85,10 +85,22 @@ public:
     Status estimateTransform(InputArray images);
     Status estimateTransform(InputArray images, const std::vector<std::vector<Rect> > &rois);
 
-    Status composePanorama2(InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice,std::vector<cv::Point> &corners);
-    Status composePanorama2(InputArray images,InputArray otherimages, OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice,std::vector<cv::Point> &corners);
+//    Status estimateTransform2(InputArray images);
+//    Status estimateTransform2(InputArray images, const std::vector<std::vector<Rect> > &rois);
 
-    Status stitch2(InputArray images, InputArray other,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask  ,std::vector<cv::Mat> &dilate_mask,int choice, std::vector<cv::Point> &corners);
+
+
+    Status composePanorama2(OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Point> &corners,vector<Mat> &Ks,std::vector<detail::CameraParams> &cameras_s);
+    Status composePanorama2(InputArray images, OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Point> &corners,vector<Mat> &Ks,std::vector<detail::CameraParams> &cameras_s);
+
+    Status composePanorama3(InputArray otherimages ,std::vector<Mat> &img_warp, vector<Mat> &Ks, std::vector<detail::CameraParams> &cameras_s);
+    Status composePanorama3(InputArray images,InputArray otherimages ,std::vector<Mat> &img_warp, vector<Mat> &Ks, std::vector<detail::CameraParams> &cameras_s);
+
+
+    Status stitch2(InputArray images,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask  , std::vector<cv::Point> &corners,vector<cv::Mat> &Ks,std::vector<detail::CameraParams> &cameras_s);
+
+    Status stitch3(InputArray images,InputArray otherimages, std::vector<cv::Mat> &img_warp,vector<cv::Mat> &Ks,std::vector<detail::CameraParams> &cameras_s);
+
 
     std::vector<int> component() const { return indices_; }
     std::vector<detail::CameraParams> cameras() const { return cameras_; }
@@ -97,6 +109,7 @@ public:
 private:
     Stitch() {}
     Ptr<detail::RotationWarper> w;
+    Ptr<detail::RotationWarper> w1;
 
     Status matchImages();
     void estimateCameraParams();
@@ -115,10 +128,12 @@ private:
     Ptr<detail::ExposureCompensator> exposure_comp_;
     Ptr<detail::SeamFinder> seam_finder_;
     Ptr<detail::Blender> blender_;
-    Ptr<detail::Blender> bledner2;
+    //Ptr<detail::Blender> bledner2;
 
     std::vector<cv::Mat> imgs_;
+    std::vector<cv::Mat> imgs_2;
     std::vector<std::vector<cv::Rect> > rois_;
+    std::vector<std::vector<cv::Rect> > rois_2;
     std::vector<cv::Size> full_img_sizes_;
     std::vector<detail::ImageFeatures> features_;
     std::vector<detail::MatchesInfo> pairwise_matches_;

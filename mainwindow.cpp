@@ -30,11 +30,6 @@ void MainWindow::ShowOnLabel(cv::Mat mat, QLabel *k)
     k->show();
 }
 
-void MainWindow::Cal()
-{
-
-}
-
 void MainWindow::on_ProgressList_currentRowChanged(int currentRow)
 {
     if(currentRow == 0)
@@ -83,8 +78,8 @@ void MainWindow::on_LoadCalButtom_clicked()
     std::vector<cv::Mat> WarpMat;
     std::vector<cv::Mat> nonDilateMask;
     std::vector<cv::Mat> WarpM;
-    cv::Mat Result;
-    if(TS.Warp(CalMat,WarpMat,nonDilateMask,Result)!=1)
+
+    if(TS.Warp(CalMat,WarpMat,nonDilateMask,CalResult,CorPoint)!=1)
     {
         statusLabel->setText("Stitching Fail!");
         return;
@@ -126,9 +121,11 @@ void MainWindow::on_LoadCalButtom_clicked()
 
 
     ui->stackedWidget->setCurrentIndex(2);
-    ShowOnLabel(Result,ui->CalResultLabel);
+    ShowOnLabel(CalResult,ui->CalResultLabel);
 
     statusProgressBar->setValue(100);
+    ui->LoadCapPic->setEnabled(true);
+    ui->CapturePicture->setEnabled(true);
 }
 
 void MainWindow::on_LoadCapPic_clicked()
@@ -164,4 +161,87 @@ void MainWindow::on_LoadCapPic_clicked()
     ShowOnLabel(CapMat[3],ui->FilterLabel4);
     statusLabel->setText("Load Capture Pictures Success!");
     statusProgressBar->setValue(20);
+    if(Cal()==1)
+    {
+        statusLabel->setText("Success!");
+    }
+    else
+    {
+        statusLabel->setAcceptDrops("Fail!");
+    }
+    ShowOnLabel(CapWarp[0],ui->WarpFilterLabel1);
+    ShowOnLabel(CapWarp[1],ui->WarpFilterLabel2);
+    ShowOnLabel(CapWarp[2],ui->WarpFilterLabel3);
+    ShowOnLabel(CapWarp[3],ui->WarpFilterLabel4);
+    statusProgressBar->setValue(40);
+    Stitch();
+    statusProgressBar->setValue(100);
+
+}
+int MainWindow::Cal()
+{
+    CapWarp.clear();
+    //TS_Detect.StLike(CalMat,CapMat,CapWarp,TS.Ks,TS.cameras_s)
+    if(TS_Detect.StLike(CalMat,CapMat,CapWarp,TS.getK(),TS.getCam())!=1)
+    {
+        return 0;
+    }
+//    for(int i=0;i<CalMat.size();i++)
+//    {
+//        cv::imshow(QString::number(i).toStdString()+"Cap",CapMat[i]);
+//        cv::imshow(QString::number(i).toStdString()+"WCap",CapWarp[i]);
+//    }
+    return 1;
+}
+
+void MainWindow::Stitch()
+{
+    RCapWarp.clear();
+    cv::Point t1(std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
+   for(int i=0;i<CorPoint.size();i++)
+    {
+        t1.x = std::min(t1.x,CorPoint[i].x);
+        t1.y = std::min(t1.y,CorPoint[i].y);
+    }
+
+    qDebug()<<"Test Begin....";
+    cv::Mat CapResult;
+
+    cv::Size size(CalResult.cols,CalResult.rows);
+    CapResult.create(size,CV_MAKETYPE(CapResult.type(),3));
+    CapResult = cv::Scalar::all(0);
+
+    for(int i=0;i<CapWarp.size();i++)
+    {
+        cv::Mat temp;
+        //cv::Size s = CapMat.size();
+        cv::resize(CapWarp[i],temp,cv::Size(CapMat[i].cols,CapMat[i].rows),CV_INTER_LINEAR);
+        RCapWarp.push_back(temp);
+    }
+
+    for(int number=0;number<CapWarp.size();number++)
+    {
+        qDebug()<<number;
+        int x = CorPoint[number].x;
+        int y = CorPoint[number].y;
+
+        for(int i = 0;i<RCapWarp[number].cols;i++)
+        {
+            for(int j=0;j<RCapWarp[number].rows;j++)
+            {
+                if((RCapWarp[number].at<cv::Vec3b>(j,i)[0]+RCapWarp[number].at<cv::Vec3b>(j,i)[1]+RCapWarp[number].at<cv::Vec3b>(j,i)[2])/3 >50)
+                {
+                    if(j+y-t1.y<CalResult.rows && i+x-t1.x<CalResult.cols && j+y-t1.y>=0 && i+x-t1.x>=0)
+                    {
+                        CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[0] = 255;
+                        CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[1] = 255;
+                        CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[2] = 255;
+                    }
+                }
+            }
+        }
+    }
+    //cv::imshow("test",temp);
+    ShowOnLabel(CapResult,ui->CapResultLabel);
+
 }

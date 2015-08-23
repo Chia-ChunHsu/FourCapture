@@ -33,7 +33,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void ShowOnLabel(cv::Mat mat,QLabel *k);
-    void Cal();
+    int Cal();
+    void Stitch();
 
 private slots:
     void on_ProgressList_currentRowChanged(int currentRow);
@@ -49,8 +50,14 @@ private:
     QProgressBar *statusProgressBar;
     QLabel *statusLabel;
     QLabel *statusGap;
+    std::vector<cv::Mat> CapWarp;
+    std::vector<cv::Mat> RCapWarp;
 
     Thread_Stitch TS;
+    Thread_Stitch TS_Detect;
+
+    std::vector<cv::Point> CorPoint;
+    cv::Mat CalResult;
 
 };
 
