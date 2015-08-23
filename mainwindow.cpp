@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addPermanentWidget(statusProgressBar,1);
     ui->statusBar->addPermanentWidget(statusGap);
     ui->stackedWidget->setCurrentIndex(0);
+
 }
 
 MainWindow::~MainWindow()
@@ -126,6 +127,18 @@ void MainWindow::on_LoadCalButtom_clicked()
     statusProgressBar->setValue(100);
     ui->LoadCapPic->setEnabled(true);
     ui->CapturePicture->setEnabled(true);
+
+
+    cv::Mat temp;
+
+    cv::Size size(CalMat[0].cols,CalMat[0].rows);
+    temp.create(size,CV_MAKETYPE(temp.type(),3));
+    temp = cv::Scalar::all(0);
+    for(int i=0;i<4;i++)
+    {
+        BlackRef.push_back(temp);
+    }
+    ui->LBlackRefButton->setEnabled(true);
 }
 
 void MainWindow::on_LoadCapPic_clicked()
@@ -154,6 +167,10 @@ void MainWindow::on_LoadCapPic_clicked()
         }
         CapMat.push_back(temp);
     }
+    for(int i=0;i<4;i++)
+    {
+        CapMat[i] = CapMat[i] -BlackRef[i];
+    }
 
     ShowOnLabel(CapMat[0],ui->FilterLabel1);
     ShowOnLabel(CapMat[1],ui->FilterLabel2);
@@ -174,9 +191,10 @@ void MainWindow::on_LoadCapPic_clicked()
     ShowOnLabel(CapWarp[2],ui->WarpFilterLabel3);
     ShowOnLabel(CapWarp[3],ui->WarpFilterLabel4);
     statusProgressBar->setValue(40);
-    Stitch();
+    Stitch(200);
     statusProgressBar->setValue(100);
-
+    ui->CapResultSlider->setEnabled(true);
+    ui->saveResultButtom->setEnabled(true);
 }
 int MainWindow::Cal()
 {
@@ -186,15 +204,10 @@ int MainWindow::Cal()
     {
         return 0;
     }
-//    for(int i=0;i<CalMat.size();i++)
-//    {
-//        cv::imshow(QString::number(i).toStdString()+"Cap",CapMat[i]);
-//        cv::imshow(QString::number(i).toStdString()+"WCap",CapWarp[i]);
-//    }
     return 1;
 }
 
-void MainWindow::Stitch()
+void MainWindow::Stitch(int value)
 {
     RCapWarp.clear();
     cv::Point t1(std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
@@ -204,8 +217,8 @@ void MainWindow::Stitch()
         t1.y = std::min(t1.y,CorPoint[i].y);
     }
 
-    qDebug()<<"Test Begin....";
-    cv::Mat CapResult;
+    //qDebug()<<"Test Begin....";
+
 
     cv::Size size(CalResult.cols,CalResult.rows);
     CapResult.create(size,CV_MAKETYPE(CapResult.type(),3));
@@ -221,7 +234,7 @@ void MainWindow::Stitch()
 
     for(int number=0;number<CapWarp.size();number++)
     {
-        qDebug()<<number;
+        //qDebug()<<number;
         int x = CorPoint[number].x;
         int y = CorPoint[number].y;
 
@@ -229,12 +242,30 @@ void MainWindow::Stitch()
         {
             for(int j=0;j<RCapWarp[number].rows;j++)
             {
-                if((RCapWarp[number].at<cv::Vec3b>(j,i)[0]+RCapWarp[number].at<cv::Vec3b>(j,i)[1]+RCapWarp[number].at<cv::Vec3b>(j,i)[2])/3 >50)
+                if((RCapWarp[number].at<cv::Vec3b>(j,i)[0]+RCapWarp[number].at<cv::Vec3b>(j,i)[1]+RCapWarp[number].at<cv::Vec3b>(j,i)[2])/3 >value)
                 {
-                    if(j+y-t1.y<CalResult.rows && i+x-t1.x<CalResult.cols && j+y-t1.y>=0 && i+x-t1.x>=0)
+                    if(j+y-t1.y<CalResult.rows && i+x-t1.x<CalResult.cols && j+y-t1.y>=0 && i+x-t1.x>=0 && number == 2)
                     {
                         CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[0] = 255;
+                        //CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[1] = 0;
+                        //CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[2] = 0;
+                    }
+                    else if(j+y-t1.y<CalResult.rows && i+x-t1.x<CalResult.cols && j+y-t1.y>=0 && i+x-t1.x>=0 && number == 1)
+                    {
+                        //CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[0] = 0;
                         CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[1] = 255;
+                        //CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[2] = 0;
+                    }
+                    else if(j+y-t1.y<CalResult.rows && i+x-t1.x<CalResult.cols && j+y-t1.y>=0 && i+x-t1.x>=0 && number == 0)
+                    {
+                        CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[0] = 120;
+                        CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[1] = 120;
+                        CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[2] = 120;
+                    }
+                    else
+                    {
+                        //CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[0] = 0;
+                        //CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[1] = 0;
                         CapResult.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[2] = 255;
                     }
                 }
@@ -243,5 +274,57 @@ void MainWindow::Stitch()
     }
     //cv::imshow("test",temp);
     ShowOnLabel(CapResult,ui->CapResultLabel);
+
+}
+
+void MainWindow::on_CapResultSlider_sliderMoved(int position)
+{
+    Stitch(position);
+    ui->CapResultSlider->setValue(position);
+}
+
+void MainWindow::on_LBlackRefButton_clicked()
+{
+    BlackRef.clear();
+
+    QStringList fileNames = QFileDialog::getOpenFileNames(this,tr("Open Image of Black Ref Pic"), "D:/Dropbox/sen3/HandHold_", tr("Image Files (*.jpg)"));
+
+    if(fileNames.size()>4)
+    {
+        statusLabel->setText("Chosse Too Many Pictures!");
+        return;
+    }
+    else if(fileNames.size()<4)
+    {
+        statusLabel->setText("Not Enough Pictures!");
+        return;
+    }
+    for(int i=0;i<4;i++)
+    {
+        cv::Mat temp = cv::imread(fileNames[i].toStdString().c_str(),cv::IMREAD_COLOR);
+        BlackRef.push_back(temp);
+    }
+
+    ShowOnLabel(BlackRef[0],ui->BlackReflabel1);
+    ShowOnLabel(BlackRef[1],ui->BlackReflabel2);
+    ShowOnLabel(BlackRef[2],ui->BlackReflabel3);
+    ShowOnLabel(BlackRef[3],ui->BlackReflabel4);
+}
+
+void MainWindow::on_CaptureCalButtom_clicked()
+{
+
+}
+
+void MainWindow::on_saveResultButtom_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                               "D:/Dropbox/sen3/HandHold_/utilited.jpg",
+                               tr("Images (*.png *.jpg)"));
+    cv::imwrite(fileName.toStdString().c_str(),CapResult);
+    cv::imwrite("1.jpg",CapMat[0]);
+    cv::imwrite("2.jpg",CapMat[1]);
+    cv::imwrite("3.jpg",CapMat[2]);
+    cv::imwrite("4.jpg",CapMat[3]);
 
 }

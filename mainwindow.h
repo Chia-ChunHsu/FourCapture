@@ -34,7 +34,7 @@ public:
     ~MainWindow();
     void ShowOnLabel(cv::Mat mat,QLabel *k);
     int Cal();
-    void Stitch();
+    void Stitch(int value);
 
 private slots:
     void on_ProgressList_currentRowChanged(int currentRow);
@@ -42,6 +42,14 @@ private slots:
     void on_LoadCalButtom_clicked();
 
     void on_LoadCapPic_clicked();
+
+    void on_CapResultSlider_sliderMoved(int position);
+
+    void on_LBlackRefButton_clicked();
+
+    void on_CaptureCalButtom_clicked();
+
+    void on_saveResultButtom_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -58,6 +66,10 @@ private:
 
     std::vector<cv::Point> CorPoint;
     cv::Mat CalResult;
+
+    std::vector<cv::Mat> BlackRef;
+
+    cv::Mat CapResult;
 
 };
 

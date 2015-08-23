@@ -19,6 +19,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
@@ -48,6 +49,7 @@ public:
     QLabel *WarpFilterLabel3;
     QLabel *WarpFilterLabel4;
     QPushButton *saveResultButtom;
+    QSlider *CapResultSlider;
     QWidget *CalibrationTab;
     QStackedWidget *stackedWidget;
     QWidget *page_2;
@@ -66,6 +68,11 @@ public:
     QLabel *CalResultLabel;
     QListWidget *ProgressList;
     QWidget *tab;
+    QLabel *BlackReflabel1;
+    QLabel *BlackReflabel2;
+    QLabel *BlackReflabel3;
+    QLabel *BlackReflabel4;
+    QPushButton *LBlackRefButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -138,7 +145,14 @@ public:
         saveResultButtom = new QPushButton(DetectTab);
         saveResultButtom->setObjectName(QStringLiteral("saveResultButtom"));
         saveResultButtom->setEnabled(false);
-        saveResultButtom->setGeometry(QRect(370, 200, 241, 61));
+        saveResultButtom->setGeometry(QRect(370, 220, 241, 41));
+        CapResultSlider = new QSlider(DetectTab);
+        CapResultSlider->setObjectName(QStringLiteral("CapResultSlider"));
+        CapResultSlider->setEnabled(false);
+        CapResultSlider->setGeometry(QRect(370, 200, 241, 19));
+        CapResultSlider->setMaximum(255);
+        CapResultSlider->setValue(200);
+        CapResultSlider->setOrientation(Qt::Horizontal);
         tabWidget->addTab(DetectTab, QString());
         CalibrationTab = new QWidget();
         CalibrationTab->setObjectName(QStringLiteral("CalibrationTab"));
@@ -206,6 +220,26 @@ public:
         tabWidget->addTab(CalibrationTab, QString());
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
+        BlackReflabel1 = new QLabel(tab);
+        BlackReflabel1->setObjectName(QStringLiteral("BlackReflabel1"));
+        BlackReflabel1->setGeometry(QRect(10, 10, 160, 120));
+        BlackReflabel1->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
+        BlackReflabel2 = new QLabel(tab);
+        BlackReflabel2->setObjectName(QStringLiteral("BlackReflabel2"));
+        BlackReflabel2->setGeometry(QRect(180, 10, 160, 120));
+        BlackReflabel2->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
+        BlackReflabel3 = new QLabel(tab);
+        BlackReflabel3->setObjectName(QStringLiteral("BlackReflabel3"));
+        BlackReflabel3->setGeometry(QRect(10, 140, 160, 120));
+        BlackReflabel3->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
+        BlackReflabel4 = new QLabel(tab);
+        BlackReflabel4->setObjectName(QStringLiteral("BlackReflabel4"));
+        BlackReflabel4->setGeometry(QRect(180, 140, 160, 120));
+        BlackReflabel4->setStyleSheet(QStringLiteral("background-color: rgb(233, 255, 255);"));
+        LBlackRefButton = new QPushButton(tab);
+        LBlackRefButton->setObjectName(QStringLiteral("LBlackRefButton"));
+        LBlackRefButton->setEnabled(false);
+        LBlackRefButton->setGeometry(QRect(10, 270, 331, 41));
         tabWidget->addTab(tab, QString());
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
@@ -222,7 +256,7 @@ public:
         retranslateUi(MainWindow);
 
         tabWidget->setCurrentIndex(0);
-        tabWidget_2->setCurrentIndex(1);
+        tabWidget_2->setCurrentIndex(0);
         stackedWidget->setCurrentIndex(0);
         ProgressList->setCurrentRow(0);
 
@@ -271,6 +305,11 @@ public:
         ProgressList->setSortingEnabled(__sortingEnabled);
 
         tabWidget->setTabText(tabWidget->indexOf(CalibrationTab), QApplication::translate("MainWindow", "Calibration Mode", 0));
+        BlackReflabel1->setText(QString());
+        BlackReflabel2->setText(QString());
+        BlackReflabel3->setText(QString());
+        BlackReflabel4->setText(QString());
+        LBlackRefButton->setText(QApplication::translate("MainWindow", "Load Black Ref", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Black Calibration", 0));
     } // retranslateUi
 
