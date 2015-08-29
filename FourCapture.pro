@@ -15,13 +15,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     thread_stitch.cpp \
-    stitch.cpp
+    stitch.cpp \
+    autocameradialog.cpp
 
 HEADERS  += mainwindow.h \
     thread_stitch.h \
-    stitch.h
+    stitch.h \
+    autocameradialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    autocameradialog.ui
 INCLUDEPATH += $$quote(D:\opencv 2.4.9.1\include)\
                $$quote(D:\opencv 2.4.9.1\include\opencv2)
 

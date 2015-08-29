@@ -16,10 +16,12 @@
 #include "opencv2/stitching/detail/blenders.hpp"
 #include <QTextCodec>
 #include "opencv2/imgproc/imgproc.hpp"
-#include <Qlist>
+#include <QList>
 #include <QCameraInfo>
 #include <QProgressBar>
+#include <QDialog>
 #include "thread_stitch.h"
+#include "autocameradialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +38,7 @@ public:
     int Cal();
     void Stitch(int value);
 
+
 private slots:
     void on_ProgressList_currentRowChanged(int currentRow);
 
@@ -50,6 +53,20 @@ private slots:
     void on_CaptureCalButtom_clicked();
 
     void on_saveResultButtom_clicked();
+
+    void on_AutoDetectButtom_clicked();
+
+    void on_SetUpButton_clicked();
+
+    void on_CapturePicture_clicked();
+
+    void on_CaptureBLRef_clicked();
+
+    void on_SaveBlackRef_clicked();
+
+    void on_SaveCalButtom_clicked();
+
+    void on_SaveCap_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -70,7 +87,10 @@ private:
     std::vector<cv::Mat> BlackRef;
 
     cv::Mat CapResult;
-
+    std::vector<QString> VideoName;
+    std::vector<int> Device;
+    AutoCameraDialog autocamera;
+    std::vector<cv::Mat> nonDilateMask;
 };
 
 #endif // MAINWINDOW_H
