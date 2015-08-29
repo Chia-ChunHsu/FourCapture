@@ -187,6 +187,9 @@ void MainWindow::on_LoadCapPic_clicked()
         statusLabel->setAcceptDrops("Fail!");
     }
     std::vector<cv::Mat> CapWarp2;
+    qDebug()<<"==============================";
+    qDebug()<<CapWarp[0].cols<<CapWarp[0].rows;
+    qDebug()<<nonDilateMask[0].cols<<nonDilateMask[0].rows;
     for(int n=0;n<CapWarp.size();n++)
     {
         cv::Mat resultTemp = CapWarp[n].clone();
@@ -196,11 +199,11 @@ void MainWindow::on_LoadCapPic_clicked()
             {
                 if(nonDilateMask[n].at<uchar>(j,i) == 255)
                 {
-                    resultTemp.at<cv::Vec3b>(j, i)[0] = CapWarp[n].at<cv::Vec3b>(j,i)[0];
-                    resultTemp.at<cv::Vec3b>(j, i)[1] = CapWarp[n].at<cv::Vec3b>(j,i)[1];
-                    resultTemp.at<cv::Vec3b>(j, i)[2] = CapWarp[n].at<cv::Vec3b>(j,i)[2];
+//                    resultTemp.at<cv::Vec3b>(j, i)[0] = CapWarp[n].at<cv::Vec3b>(j,i)[0];
+//                    resultTemp.at<cv::Vec3b>(j, i)[1] = CapWarp[n].at<cv::Vec3b>(j,i)[1];
+//                    resultTemp.at<cv::Vec3b>(j, i)[2] = CapWarp[n].at<cv::Vec3b>(j,i)[2];
                 }
-                else
+                else if(nonDilateMask[n].at<uchar>(j,i) != 255)
                 {
                     resultTemp.at<cv::Vec3b>(j, i)[0] = 0;
                     resultTemp.at<cv::Vec3b>(j, i)[1] = 0;
