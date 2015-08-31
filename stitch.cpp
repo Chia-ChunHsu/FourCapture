@@ -65,6 +65,24 @@ Stitch::Status Stitch::estimateTransform(InputArray images, const vector<vector<
     return OK;
 }
 
+//Stitch::Status Stitch::estimateTransform2(InputArray images)
+//{
+//    return estimateTransform2(images, vector<vector<Rect> >());
+//}
+
+//Stitch::Status Stitch::estimateTransform2(InputArray images, const std::vector<std::vector<Rect> > &rois)
+//{
+//    images.getMatVector(imgs_2);
+//    rois_2 = rois;
+
+//    Status status;
+//    if ((status = matchImages()) != OK)
+//        return status;
+
+//    estimateCameraParams();
+
+//    return OK;
+//}
 
 Stitch::Status Stitch::composePanorama2(OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,vector<Point> &corners_,std::vector<cv::Mat> &Ks,std::vector<detail::CameraParams> &cameras_s)
 {
@@ -115,6 +133,7 @@ Stitch::Status Stitch::composePanorama2(InputArray images ,OutputArray pano, std
     vector<Size> sizes(imgs_.size());
     vector<Mat> masks(imgs_.size());
 
+
     // Prepare image masks
     for (size_t i = 0; i < imgs_.size(); ++i)
     {
@@ -133,15 +152,14 @@ Stitch::Status Stitch::composePanorama2(InputArray images ,OutputArray pano, std
         K(1,2) *= (float)seam_work_aspect_;
 
         corners[i] = w->warp(seam_est_imgs_[i], K, cameras_[i].R, INTER_LINEAR, BORDER_REFLECT, images_warped[i]);
-        //qDebug()<<"0000"<<images_warped[i].cols;
-        //cv::Mat temp =images_warped[i].clone();
+
+        cv::Mat temp =images_warped[i].clone();
 
         cv::waitKey(0);
         sizes[i] = images_warped[i].size();
-        //qDebug()<<"Sizes cor "<<sizes[i].width;
 
-        //    cv::Point  p = cv::Point(corners[i].x,corners[i].y);
-        //    corners_.push_back(p);
+        cv::Point  p = cv::Point(corners[i].x,corners[i].y);
+        corners_.push_back(p);
 
         w->warp(masks[i], K, cameras_[i].R, INTER_NEAREST, BORDER_CONSTANT, masks_warped[i]);
     }
@@ -221,7 +239,6 @@ Stitch::Status Stitch::composePanorama2(InputArray images ,OutputArray pano, std
                 Mat K;
                 cameras_[i].K().convertTo(K, CV_32F);
                 Rect roi = w->warpRoi(sz, K, cameras_[i].R);
-                //qDebug()<<"ROI w = "<<roi.width;
                 corners[i] = roi.tl();
                 sizes[i] = roi.size();
             }
@@ -241,7 +258,7 @@ Stitch::Status Stitch::composePanorama2(InputArray images ,OutputArray pano, std
         w->warp(img, K, cameras_[img_idx].R, INTER_LINEAR, BORDER_REFLECT, img_warped);
 
 
-        // Warp the current image mask
+        //        // Warp the current image mask
         img_warp.push_back(img_warped);
         Ks.push_back(K);
         cameras_s.push_back(cameras_[img_idx]);
@@ -256,7 +273,6 @@ Stitch::Status Stitch::composePanorama2(InputArray images ,OutputArray pano, std
         exposure_comp_->apply((int)img_idx, corners[img_idx], img_warped, mask_warped);
 
         nodilate_mask.push_back(mask_warped);
-        //cv::imshow(QString::number(img_idx).toStdString()+"di",mask_warped);
 
         img_warped.convertTo(img_warped_s, CV_16S);
         img_warped.release();
@@ -292,37 +308,27 @@ Stitch::Status Stitch::composePanorama2(InputArray images ,OutputArray pano, std
     // Preliminary result is in CV_16SC3 format, but all values are in [0,255] range,
     // so convert it to avoid user confusing
     result.convertTo(pano_, CV_8U);
-    //qDebug()<<"pano_ "<<pano_.cols<<pano_.rows;
-    for(int i=0;i<4;i++)
-    {
-        int xscal = result.cols/sizes[i].width;
-        int yscal = result.rows/sizes[i].height;
-        int x = corners[i].x*xscal;
-        int y = corners[i].y*yscal;
-        cv::Point p = cv::Point(x,y);
-        corners_.push_back(p);
-    }
-//    cv::Point  p = cv::Point(corners[i].x,corners[i].y);
-//    corners_.push_back(p);
 
     return OK;
 }
 
 Stitch::Status Stitch::composePanorama3(InputArray otherimages ,std::vector<Mat> &img_warp, vector<Mat> &Ks, std::vector<detail::CameraParams> &cameras_s)
 {
+    qDebug()<<"000";
     return composePanorama3(vector<Mat>(),otherimages,img_warp,Ks,cameras_s);
 }
 
 Stitch::Status Stitch::composePanorama3(InputArray images,InputArray otherimages ,std::vector<Mat> &img_warp, vector<Mat> &Ks, std::vector<detail::CameraParams> &cameras_s)
 {
     LOGLN("Warping images (auxiliary)... ");
+    qDebug()<<"001";
     vector<Mat> imgs;
     vector<Mat> others;
     images.getMatVector(imgs);
     otherimages.getMatVector(others);
     if (!imgs.empty())
     {
-
+        qDebug()<<"002";
         CV_Assert(imgs.size() == imgs_.size());
         Mat img;
         seam_est_imgs_.resize(imgs.size());
@@ -366,7 +372,6 @@ Stitch::Status Stitch::composePanorama3(InputArray images,InputArray otherimages
         masks[i].create(seam_est_imgs_[i].size(), CV_8U);
         masks[i].setTo(Scalar::all(255));
     }
-
     // Warp images and their masks
     w = warper_->create(float(warped_image_scale_ * seam_work_aspect_));
     for (size_t i = 0; i < imgs_.size(); ++i)
@@ -378,14 +383,22 @@ Stitch::Status Stitch::composePanorama3(InputArray images,InputArray otherimages
         K(1,1) *= (float)seam_work_aspect_;
         K(1,2) *= (float)seam_work_aspect_;
 
+
         corners[i] = w->warp(others[i], Ks[i], cameras_s[i].R, INTER_LINEAR, BORDER_REFLECT, images_warped[i]);
 
         sizes[i] = images_warped[i].size();
 
+
+
         w->warp(masks[i], Ks[i], cameras_s[i].R, INTER_NEAREST, BORDER_CONSTANT, masks_warped[i]);
+//            cv::imshow("warp "+QString::number(i).toStdString(),images_warped[i]);
+//            cv::imshow("mask "+QString::number(i).toStdString(),masks_warped[i]);
         img_warp.push_back(images_warped[i]);
+        //nodilate_mask.push_back(masks_warped[i]);
+                //img_warp,std::vector<cv::Mat> &nodilate_mask
     }
 
+    qDebug()<<"++++++++++++++++++++";
     return OK;
 
 }

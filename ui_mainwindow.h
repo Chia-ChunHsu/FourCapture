@@ -153,7 +153,7 @@ public:
         label = new QLabel(tab_3);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(180, 130, 161, 16));
-        label->setStyleSheet(QStringLiteral("background-color: rgb(255, 0, 0);"));
+        label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 255);"));
         label_2 = new QLabel(tab_3);
         label_2->setObjectName(QStringLiteral("label_2"));
         label_2->setGeometry(QRect(10, 270, 161, 16));
@@ -161,7 +161,7 @@ public:
         label_3 = new QLabel(tab_3);
         label_3->setObjectName(QStringLiteral("label_3"));
         label_3->setGeometry(QRect(180, 270, 161, 16));
-        label_3->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 255);"));
+        label_3->setStyleSheet(QStringLiteral("background-color: rgb(255, 0, 0);"));
         tabWidget_2->addTab(tab_3, QString());
         saveResultButtom = new QPushButton(DetectTab);
         saveResultButtom->setObjectName(QStringLiteral("saveResultButtom"));
@@ -283,7 +283,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 640, 22));
+        menuBar->setGeometry(QRect(0, 0, 640, 21));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -295,7 +295,7 @@ public:
         retranslateUi(MainWindow);
 
         tabWidget->setCurrentIndex(0);
-        tabWidget_2->setCurrentIndex(1);
+        tabWidget_2->setCurrentIndex(0);
         stackedWidget->setCurrentIndex(0);
         ProgressList->setCurrentRow(0);
 
