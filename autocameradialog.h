@@ -8,7 +8,7 @@
 #include <QTextStream>
 #include <iostream>
 #include <QCameraInfo>
-
+//Version2.0
 namespace Ui {
 class AutoCameraDialog;
 }

@@ -13,7 +13,7 @@
 #include "opencv2/stitching/detail/camera.hpp"
 //#include "myblender.h"
 
-
+//Version2.0
 #include <QDebug>
 
 namespace cv {

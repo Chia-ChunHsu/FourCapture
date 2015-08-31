@@ -17,7 +17,7 @@
 #include <QCameraInfo>
 #include <QProgressBar>
 #include "stitch.h"
-
+//Version2.0
 class Thread_Stitch :public QThread
 {
 public:

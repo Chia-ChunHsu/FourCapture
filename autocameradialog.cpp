@@ -5,6 +5,7 @@ AutoCameraDialog::AutoCameraDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AutoCameraDialog)
 {
+    //Version2.0
     ui->setupUi(this);
 }
 

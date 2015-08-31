@@ -22,7 +22,7 @@
 #include <QDialog>
 #include "thread_stitch.h"
 #include "autocameradialog.h"
-
+//Version2.0
 namespace Ui {
 class MainWindow;
 }
