@@ -25,6 +25,7 @@ public:
 
 private slots:
 
+
     void on_saveCameraNameButtom_clicked();
 
     void on_Detect_clicked();
